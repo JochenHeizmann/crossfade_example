@@ -6,20 +6,27 @@
 <script type="text/javascript">
     var myPlayer;
     window.onload = function() {
-      myPlayer = new CrossfadePlayer();
-      myPlayer.loadSounds("tsa1a.mp3", "tsa1b.mp3");
-    };
+        myPlayer = new CrossfadePlayer();
 
+        myPlayer.onReady = function() {
+            document.getElementById("myPlayerControls").style.display = 'block';
+            document.getElementById("myPlayerLoading").style.display = 'none';
+        };
+        
+        myPlayer.loadSounds("tsa1a.mp3", "tsa1b.mp3");
+    };
 </script>
 <title>Audio Test</title>
 </head>
 <body>
 </body>
 </html>
-<p>
-<input type="button" onclick="myPlayer.toggle();" value="Play/Pause"/>Sample 1 
-<input type="range" min="0" max="100" value="100" oninput="myPlayer.crossfade(this);" /> 
-Sample 2
+<p id="myPlayerLoading">Loading...</p>
+<p id="myPlayerControls" style="display: none">
+    <input type="button" onclick="myPlayer.toggle();" value="Play/Pause"/>
+    Sample 1 
+    <input type="range" min="0" max="100" value="100" oninput="myPlayer.crossfade(this);" /> 
+    Sample 2
 </p>
 </body>
 </head>

@@ -10,21 +10,33 @@ function CrossfadePlayer() {
     if (CrossfadePlayer.audioContext == null) {
         this.initAudioCtx();
     }
+
+    this.onReady = function() {};
 }
 
 CrossfadePlayer.prototype.initAudioCtx = function() {
     try {
-        window.AudioContext = window.AudioContext||window.webkitAudioContext;
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
         CrossfadePlayer.audioContext = new AudioContext();
     } catch(e) {
         alert('Web Audio API is not supported in this browser');
     }
 };
 
-CrossfadePlayer.prototype.loadSounds = function(soundUrl1, soundUrl2) {
+CrossfadePlayer.prototype.loadSounds = function(soundUrl1, soundUrl2) { 
     var playerInstance = this;
-    this.loadSound(function(buffer) { playerInstance.sampleBuffer1 = buffer; }, soundUrl1);
-    this.loadSound(function(buffer) { playerInstance.sampleBuffer2 = buffer; }, soundUrl2);
+    playerInstance.sampleBuffer1 = null;
+    playerInstance.sampleBuffer2 = null;
+    this.loadSound(function(buffer) { playerInstance.sampleBuffer1 = buffer; playerInstance.checkIfAllSoundsLoaded(); }, soundUrl1);
+    this.loadSound(function(buffer) { playerInstance.sampleBuffer2 = buffer; playerInstance.checkIfAllSoundsLoaded(); }, soundUrl2);
+};
+
+CrossfadePlayer.prototype.checkIfAllSoundsLoaded = function() {
+    if (this.sampleBuffer1 != null && this.sampleBuffer2 != null) {
+        this.onReady();
+    } else {
+        // console.log("Not loaded yet");
+    }
 };
 
 CrossfadePlayer.prototype.loadSound = function(assignBuffer, url) {
@@ -46,8 +58,14 @@ CrossfadePlayer.prototype.loadSound = function(assignBuffer, url) {
 CrossfadePlayer.prototype.play = function() {
     var playerInstance = this;
 
-    if (playerInstance.sampleBuffer1 == null) {
+    if (!playerInstance.sampleBuffer1 instanceof AudioBuffer) {
         alert("Error! SampleBuffer1 is empty");
+        return;
+    }
+
+    if (!playerInstance.sampleBuffer2 instanceof AudioBuffer) {
+        alert("Error! SampleBuffer2 is empty");
+        return;
     }
 
     this.ctl1 = createSource(playerInstance.sampleBuffer1);
@@ -63,7 +81,11 @@ CrossfadePlayer.prototype.play = function() {
         this.ctl2.source.start(0);
     }
 
-    function createSource(buffer) {
+    function createSource(buffer) {                
+        if (!buffer instanceof AudioBuffer) {
+            alert("Error! Cannot create Source. (Buffer not loaded yet?)");
+        }
+        
         var source = CrossfadePlayer.audioContext.createBufferSource();
         var gainNode = CrossfadePlayer.audioContext.createGain ? CrossfadePlayer.audioContext.createGain() : CrossfadePlayer.audioContext.createGainNode();
         source.buffer = buffer;
