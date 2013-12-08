@@ -35,12 +35,23 @@ CrossfadePlayer.prototype.loadSound = function(assignBuffer, url) {
     request.onload = function() {
         CrossfadePlayer.audioContext.decodeAudioData(request.response, assignBuffer);
     }
+
+    request.onerror = function() {
+        alert("Error when loading " + url);
+    }
+
     request.send();
 }
 
 CrossfadePlayer.prototype.play = function() {
-    this.ctl1 = createSource(this.sampleBuffer1);
-    this.ctl2 = createSource(this.sampleBuffer2);
+    var playerInstance = this;
+
+    if (playerInstance.sampleBuffer1 == null) {
+        alert("Error! SampleBuffer1 is empty");
+    }
+
+    this.ctl1 = createSource(playerInstance.sampleBuffer1);
+    this.ctl2 = createSource(playerInstance.sampleBuffer2);
 
     this.ctl1.gainNode.gain.value = 0;
 
