@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+       "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script type="text/javascript" src="crossfadePlayer.js"></script>
+<script type="text/javascript">
+    var myPlayer;
+    window.onload = function() {
+      myPlayer = new CrossfadePlayer();
+      myPlayer.loadSounds("tsa1a.mp3", "tsa1b.mp3");
+    };
+
+</script>
+<title>Audio Test</title>
+</head>
+<body>
+</body>
+</html>
+<p>
+<input type="button" onclick="myPlayer.toggle();" value="Play/Pause"/>Sample 1 
+<input type="range" min="0" max="100" value="100" oninput="myPlayer.crossfade(this);" /> 
+Sample 2
+</p>
+</body>
+</head>
+</html>
+
+
